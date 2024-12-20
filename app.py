@@ -65,4 +65,5 @@ def send_message(recipient_id, text):
     print(f"Message sent: {response.json()}")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Użyj portu zdefiniowanego przez Heroku (zmienna środowiskowa PORT) lub 5000 jako domyślny
+    app.run(debug=True, host='0.0.0.0', port=int(os.getenv("PORT", 5000)))
