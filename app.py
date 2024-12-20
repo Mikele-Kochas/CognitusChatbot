@@ -74,7 +74,7 @@ Okazjonalnie emotikonów, w tym robotów np. 🤖 i naukowych przedmiotów np. �
 
                             # Send user message and previous conversation history to OpenAI
                             response = openai.ChatCompletion.create(
-                                model="gpt-4",  # Ensure this is the correct model
+                                model="gpt-4o-mini",  # Ensure this is the correct model
                                 messages=[
                                     {"role": "system", "content": system_prompt},
                                 ] + conversation_history[sender_id]
