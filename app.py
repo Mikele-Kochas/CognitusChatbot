@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template
+from flask import Flask, request
+import requests  # Dodajemy import modułu requests
 import os
 import openai
 
@@ -8,15 +9,7 @@ app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Verify Token do weryfikacji webhooka
-VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "moj_bot")  # Możesz ustawić wartość domyślną, jeśli zmienna środowiskowa jest pusta
-
-# URL aplikacji
-CALLBACK_URL = os.getenv("CALLBACK_URL", "https://evening-ridge-17995-c165e0dc54de.herokuapp.com/webhook")
-
-@app.route('/')
-def index():
-    # Przekazujemy VERIFY_TOKEN i CALLBACK_URL do template
-    return render_template('index.html', verify_token=VERIFY_TOKEN, callback_url=CALLBACK_URL)
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
@@ -68,7 +61,7 @@ def send_message(recipient_id, text):
         "message": {"text": text}
     }
     headers = {"Content-Type": "application/json"}
-    response = requests.post(url, json=payload, headers=headers)
+    response = requests.post(url, json=payload, headers=headers)  # Teraz requests jest zaimportowane
     print(f"Message sent: {response.json()}")
 
 if __name__ == '__main__':
