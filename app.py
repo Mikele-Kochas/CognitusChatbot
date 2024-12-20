@@ -1,55 +1,68 @@
-from flask import Flask, request, jsonify, render_template
-import openai
+from flask import Flask, request
+import requests
 import os
+import openai
 
 app = Flask(__name__)
 
-# Pobierz klucz API OpenAI z zmiennych środowiskowych
+# Klucz API OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Ustawienia dla domyślnych promptów i pamięci rozmowy
-default_prompts = [
-    {"role": "system", "content": (
-        "Jesteś chatbotem. Odpowiadasz na pytania użytkownika i prowadzisz rozmowę. "
-        "Piszesz w sposób naturalny i zrozumiały. Używasz prostego języka."
-    )}
-]
-conversation = []  # Pamięć rozmowy
+# Verify Token do weryfikacji webhooka
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "moj_bot")
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/webhook', methods=['GET', 'POST'])
+def webhook():
+    if request.method == 'GET':
+        # Weryfikacja webhooka
+        mode = request.args.get('hub.mode')
+        token = request.args.get('hub.verify_token')
+        challenge = request.args.get('hub.challenge')
 
-@app.route('/ask', methods=['POST'])
-def ask():
-    user_input = request.json.get('input', '')
-    print(f"Received input: {user_input}")
+        if mode == 'subscribe' and token == VERIFY_TOKEN:
+            print("Webhook verified!")
+            return challenge, 200
+        else:
+            return "Forbidden", 403
 
-    # Dodaj domyślne prompty, jeśli to pierwsze zapytanie
-    if not conversation:
-        conversation.extend(default_prompts)
+    elif request.method == 'POST':
+        # Obsługa przychodzących wiadomości
+        data = request.json
+        print(f"Received data: {data}")
+        
+        if data.get('object') == 'page':
+            for entry in data['entry']:
+                for message_event in entry['messaging']:
+                    if 'message' in message_event:
+                        sender_id = message_event['sender']['id']
+                        user_message = message_event['message']['text']
 
-    # Dodaj wiadomość użytkownika do rozmowy
-    conversation.append({"role": "user", "content": user_input})
+                        # Pobierz odpowiedź z OpenAI
+                        response = openai.ChatCompletion.create(
+                            model="gpt-4o-mini",
+                            messages=[
+                                {"role": "system", "content": "Jesteś chatbotem Messenger."},
+                                {"role": "user", "content": user_message}
+                            ]
+                        )
+                        bot_reply = response['choices'][0]['message']['content']
 
-    # Pobierz odpowiedź z OpenAI
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
-            messages=conversation
-        )
-        assistant_reply = response['choices'][0]['message']['content']
-        print(f"Assistant reply: {assistant_reply}")
+                        # Wyślij odpowiedź do użytkownika
+                        send_message(sender_id, bot_reply)
 
-        # Dodaj odpowiedź do rozmowy
-        conversation.append({"role": "assistant", "content": assistant_reply})
+        return "EVENT_RECEIVED", 200
 
-        return jsonify({"response": assistant_reply})
-    except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({"response": "Przepraszam, wystąpił błąd."})
+def send_message(recipient_id, text):
+    """Wysyła wiadomość do użytkownika"""
+    PAGE_ACCESS_TOKEN = os.getenv("PAGE_ACCESS_TOKEN")
+    url = f"https://graph.facebook.com/v12.0/me/messages?access_token={PAGE_ACCESS_TOKEN}"
+    payload = {
+        "recipient": {"id": recipient_id},
+        "message": {"text": text}
+    }
+    headers = {"Content-Type": "application/json"}
+    response = requests.post(url, json=payload, headers=headers)
+    print(f"Message sent: {response.json()}")
 
 if __name__ == '__main__':
-    # Pobierz PORT z zmiennych środowiskowych lub ustaw domyślny 5000
-    port = int(os.getenv("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(debug=True)
