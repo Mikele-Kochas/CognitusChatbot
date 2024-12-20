@@ -1,5 +1,4 @@
-from flask import Flask, request
-import requests
+from flask import Flask, request, render_template
 import os
 import openai
 
@@ -9,11 +8,15 @@ app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Verify Token do weryfikacji webhooka
-VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "moj_bot")  # Możesz ustawić wartość domyślną, jeśli zmienna środowiskowa jest pusta
+
+# URL aplikacji
+CALLBACK_URL = os.getenv("CALLBACK_URL", "https://evening-ridge-17995-c165e0dc54de.herokuapp.com/webhook")
 
 @app.route('/')
 def index():
-    return "Bot is running!"
+    # Przekazujemy VERIFY_TOKEN i CALLBACK_URL do template
+    return render_template('index.html', verify_token=VERIFY_TOKEN, callback_url=CALLBACK_URL)
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
@@ -69,5 +72,4 @@ def send_message(recipient_id, text):
     print(f"Message sent: {response.json()}")
 
 if __name__ == '__main__':
-    # Użyj portu zdefiniowanego przez Heroku (zmienna środowiskowa PORT) lub 5000 jako domyślny
-    app.run(debug=True, host='0.0.0.0', port=int(os.getenv("PORT", 5000)))
+    app.run(debug=True)
