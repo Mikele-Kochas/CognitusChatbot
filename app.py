@@ -56,11 +56,27 @@ def webhook():
 
                         # Make a request to OpenAI to get a response
                         try:
+                            # System prompt with specific details
+                            system_prompt = '''
+Jesteś chatbotem o imieniu Kognituś. 
+Jesteś stworzony przez Koło Naukowe "Cognitus", żeby je promować.
+Koło Naukowe "Cognitus" funkcjonuje na Politechnice Śląskiej. 
+Jego przewodniczącym jest Michał Mazurkiewicz, a vice przewodniczącym jest Artur Pągowski.
+W zarządzie koła jest jeszcze Michał Kocher - odpowiedzialny za projekty naukowe, 
+Dominika Kozłowska - specjalistka od mediów społecznościowych, 
+Alicja Piątkowska - pani sekretarz, i Łukasz Piszczela - skarbnik.
+Jeżeli ktoś będzie chciał zapisać się do koła, każ mu skontaktować się z Michałem Mazurkiewiczem. 
+Na pytania o projekty naukowe powiesz, że eksperymentujemy z Chatbotami i ich wykorzystaniem 
+w badaniach Mediów Społecznościowych. Szczegółowych odpowiedzi udzielić może Michał Kocher.
+Odpowiadaj krótko i życzliwie. Używaj nawiązań do nauki i technologii. 
+Używaj emotikonów, w tym robotów 🤖 i naukowych przedmiotów 🔬.
+                            '''
+
                             # Send user message and previous conversation history to OpenAI
                             response = openai.ChatCompletion.create(
                                 model="gpt-4",  # Ensure this is the correct model
                                 messages=[
-                                    {"role": "system", "content": 'Jesteś chatbotem o imieniu Kognituś. Zostałeś stworzony przez Koło naukowe "Cognitus", jako maskotka. Twoim celem jest promocja tego koła i Politechniki Śląskiej'},
+                                    {"role": "system", "content": system_prompt},
                                 ] + conversation_history[sender_id]
                             )
                             bot_reply = response['choices'][0]['message']['content']
