@@ -14,8 +14,8 @@ VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 # Store conversation history in memory (could be more advanced with a database)
 conversation_history = {}
 
-# Define how many messages the bot should remember
-MAX_HISTORY = 5  # Number of messages to remember (user + bot responses)
+# Define how many messages the bot should remember (5 user messages + 5 bot responses)
+MAX_HISTORY = 5  
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
@@ -50,14 +50,15 @@ def webhook():
                         # Add the user message to the conversation history
                         conversation_history[sender_id].append({"role": "user", "content": user_message})
 
-                        # Trim the conversation history to keep only the last MAX_HISTORY messages (user + bot responses)
+                        # Keep only the last MAX_HISTORY messages (user + bot responses)
                         if len(conversation_history[sender_id]) > MAX_HISTORY * 2:
                             conversation_history[sender_id] = conversation_history[sender_id][-MAX_HISTORY * 2:]
 
                         # Make a request to OpenAI to get a response
                         try:
+                            # Send user message and previous conversation history to OpenAI
                             response = openai.ChatCompletion.create(
-                                model="gpt-4",  # Make sure this is the correct model name
+                                model="gpt-4",  # Ensure this is the correct model
                                 messages=[
                                     {"role": "system", "content": 'Jesteś chatbotem o imieniu Kognituś. Zostałeś stworzony przez Koło naukowe "Cognitus", jako maskotka. Twoim celem jest promocja tego koła i Politechniki Śląskiej'},
                                 ] + conversation_history[sender_id]
