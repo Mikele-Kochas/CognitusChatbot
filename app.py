@@ -11,6 +11,10 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # Verify Token do weryfikacji webhooka
 VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
+@app.route('/')
+def index():
+    return "Bot is running!"
+
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
