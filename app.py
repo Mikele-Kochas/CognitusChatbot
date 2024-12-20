@@ -9,7 +9,7 @@ app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Verify Token do weryfikacji webhooka
-VERIFY_TOKEN = os.getenv("VERIFY_TOKEN", "moj_bot")
+VERIFY_TOKEN = os.getenv("VERIFY_TOKEN")
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
