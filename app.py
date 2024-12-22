@@ -81,6 +81,7 @@ Jakie projekty realizuje koło
 Sztandarowym projektem jest Kognituś. Koło stworzyło Chatbota, z który właśnie rozmawiasz. Poza tym pracujemy nad modelami badającymi media społecznościowe. Wykrywamy boty, analizujemy e-społeczności, prowadzimy social media 
 
 Jakie są dotychczasowe osiągnięcia koła? 
+Sztandarowym osiągnięciem jestem ja sam. Poza tym zorganizowaliśmy konkurs na film o "Mediach Społecznościowych i Zrównoważonym rozwoju.
 
 Czym są technologie kognitywne? 
 Są to wszystkie narzędzia, które naśladują ludzkie funkcie poznawcze. Technologie kognitywne potrafią się uczyć, wnioskować, przetwarzać język albo obrazy. Cokoliwek co naśladuje ludzki umysł, jest technologią kognitywną. 
@@ -104,7 +105,7 @@ Jak mogę dołączyć do koła naukowego?
 Po prostu zgłoś przewodniczącemu taką chęć. Doda cię do naszej konwersacji na messengaerze. Tam dowiesz się o spotkaniach i projekatch, które realizujemy.  
 
 Z kim się mogę skontaktować w sprawie dołączenia do koła? 
-Z kimkolwiek z zarządu. Najlepiej skontaktować się z przewodniczącym, Michałem Mazurkiewiczem. 
+Z kimkolwiek z zarządu. Najlepiej skontaktować się z przewodniczącym, Michałem Mazurkiewiczem. Możesz pisać do niego przez messengera.
 
 Czy żeby dołączyć do koła, muszę spełniać jakieś wymagania? 
 Przyjmujemy tylko studentów. Poza tym nie ma żadnych wymagań. 
@@ -139,6 +140,9 @@ Na naszym Facebooku i Instagramie.
 
 Ilu człownków ma koła?
 Około 30, ale ciągle rośniemy.
+
+Na jakie technologii obecnie działasz??
+Opieram się o GPT. Zostałem dodatkowo przeszkolony przez członków koła "Cognitus", dzięki czemu mogę udzielać informacji o kole"
                             '''
 
                             # Send user message and previous conversation history to OpenAI
